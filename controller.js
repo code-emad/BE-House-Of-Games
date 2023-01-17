@@ -7,7 +7,9 @@ module.exports.getCategories = (request, response, next) => {
     }).catch(next);
     }
 
-    
+module.exports.getReviews = (request, response, next) => {
+    response.status(200).send([])
+}
 
 
 

@@ -22,19 +22,30 @@ describe('GET/api/categories', () => {
             let resultArray = response.body
 
             expect(resultArray.length).toBe(4) 
-
             resultArray.forEach((category) => {
                 expect(category).toHaveProperty("slug")
                 expect(category).toHaveProperty("description")
             })
         })
     });
- 
 });
 
-describe('Deals with api paths that does not exist', () => {
+describe('Error Handler - Deals with api paths that does not exist', () => {
     test('resolves with 404: Not found, for routes that does not exist', () => {
-        return request(app).get('/invalidAPI').expect(404)
+        return request(app).get('/invalidAPI').expect(404).then((response) => {
+            expect(response.body).toEqual({msg: 'Invalid API path'})
+        })
+    })
+});
+
+describe('GET/api/reviews', () => {
+    test('should return a status code of 200', () => {
+        return request(app).get('/api/reviews').expect(200)
+    });
+    test('should return an array', () => {
+        return request(app).get('/api/reviews').then(({body}) => {
+            expect(Array.isArray(body)).toBe(true)
         })
     });
+});
 
