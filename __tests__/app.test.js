@@ -3,6 +3,7 @@ const app = require('../app')
 const db = require('../db/connection')
 const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index')
+const sorted = require('jest-sorted')
 
 beforeEach(() => seed(testData));
 
@@ -82,11 +83,7 @@ describe('GET/api/reviews', () => {
     });
     test('date is ordered in desc order', () => {
         return request(app).get('/api/reviews').then(({body}) => {
-            let firstReview = body[0]
-            let lastReview = body[body.length - 1]
-
-            expect(firstReview.created_at).toEqual('2021-01-25T11:16:54.963Z')
-            expect(lastReview.created_at).toEqual('1970-01-10T02:08:38.400Z')
+            expect(body).toBeSortedBy('created_at', {descending: true})
         })
     });
 });
