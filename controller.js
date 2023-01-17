@@ -1,5 +1,5 @@
 const db = require('./db/connection')
-const {fetchCategories} = require('./model')
+const {fetchCategories, fetchReviews} = require('./model')
 
 module.exports.getCategories = (request, response, next) => {
     fetchCategories().then((categories) => {
@@ -8,7 +8,10 @@ module.exports.getCategories = (request, response, next) => {
     }
 
 module.exports.getReviews = (request, response, next) => {
-    response.status(200).send([])
+    fetchReviews().then(({rows}) => {
+        response.status(200).send(rows)
+    })
+    
 }
 
 
