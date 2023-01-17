@@ -3,6 +3,7 @@ const app = require('../app')
 const db = require('../db/connection')
 const seed = require('../db/seeds/seed')
 const testData = require('../db/data/test-data/index')
+const sorted = require('jest-sorted')
 
 beforeEach(() => seed(testData));
 
@@ -51,15 +52,15 @@ describe('GET/api/reviews', () => {
         return request(app).get('/api/reviews').then(({body}) => {
             expect(body.length).toBe(13)
             body.forEach((review) => {
-                expect(review).toHaveProperty("owner")
-                expect(review).toHaveProperty("title")
-                expect(review).toHaveProperty("review_id")
-                expect(review).toHaveProperty("category")
-                expect(review).toHaveProperty("review_img_url")
-                expect(review).toHaveProperty("created_at")
-                expect(review).toHaveProperty("votes")
-                expect(review).toHaveProperty("designer")
-                expect(review).toHaveProperty("comment_count")
+                expect(review).toHaveProperty("owner" ,expect.any(String))
+                expect(review).toHaveProperty("title" ,expect.any(String))
+                expect(review).toHaveProperty("review_id" ,expect.any(Number))
+                expect(review).toHaveProperty("category" ,expect.any(String))
+                expect(review).toHaveProperty("review_img_url" ,expect.any(String))
+                expect(review).toHaveProperty("created_at" ,expect.any(String))
+                expect(review).toHaveProperty("votes" ,expect.any(Number))
+                expect(review).toHaveProperty("designer" ,expect.any(String))
+                expect(review).toHaveProperty("comment_count" ,expect.any(Number))
             })
         })
     });
@@ -81,11 +82,38 @@ describe('GET/api/reviews', () => {
     });
     test('date is ordered in desc order', () => {
         return request(app).get('/api/reviews').then(({body}) => {
-            let firstReview = body[0]
-            let lastReview = body[body.length - 1]
+            expect(body).toBeSortedBy('created_at', {descending: true})
+        })
+    });
+});
 
-            expect(firstReview.created_at).toEqual('2021-01-25T11:16:54.963Z')
-            expect(lastReview.created_at).toEqual('1970-01-10T02:08:38.400Z')
+describe('GET/api/reviews:review_id', () => {
+    test('should return a status code of 200', () => {
+        return request(app).get('/api/reviews/1').expect(200)
+    });
+    test('should contain the following keys', () => {
+        return request(app).get('/api/reviews/1').then(({body}) => {
+            expect(body).toHaveProperty("review_id", expect.any(Number))
+            expect(body).toHaveProperty("title", expect.any(String))
+            expect(body).toHaveProperty("review_body", expect.any(String))
+            expect(body).toHaveProperty("designer", expect.any(String))
+            expect(body).toHaveProperty("review_img_url", expect.any(String))
+            expect(body).toHaveProperty("votes", expect.any(Number))
+            expect(body).toHaveProperty("category", expect.any(String))
+            expect(body).toHaveProperty("owner", expect.any(String))
+            expect(body).toHaveProperty("created_at", expect.any(String))
+        })
+    });
+    //error handling
+    test('if id is valid but not found returns 404 ID not found', () => {
+        return request(app).get('/api/reviews/14').expect(404).then(({text}) => {
+            expect(text).toBe("Review Id not found")
+        })
+    });
+    test('if ID is not valid, returns 400 Not valid ID', () => {
+        return request(app).get('/api/reviews/cheese').expect(400).then(({body}) => {
+            console.log(body)
+            expect(body.msg).toBe("Not valid Review Id")
         })
     });
 });
