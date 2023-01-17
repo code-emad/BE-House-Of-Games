@@ -34,7 +34,7 @@ describe('GET/api/categories', () => {
 
 describe('Deals with api paths that does not exist', () => {
     test('resolves with 404: Not found, for routes that does not exist', () => {
-        return request(app).get('/api/invalidAPI').expect(404)
+        return request(app).get('/invalidAPI').expect(404)
         })
     });
 
