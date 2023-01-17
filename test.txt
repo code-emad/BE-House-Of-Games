@@ -16,3 +16,8 @@ You are now connected to database "nc_games_test" as user "emad".
  mallionaire     | Settlers of Catan: Don't Settle For Less             |        13 | social deduction | https://images.pexels.com/photos/1153929/pexels-photo-1153929.jpeg?w=700&h=700 | 1970-01-10 03:08:38.4   |    16 | Klaus Teuber           |             0
 (13 rows)
 
+ review_id |  title   |  review_body  |   designer    |                                review_img_url                                | votes | category  |    owner    |       created_at        
+-----------+----------+---------------+---------------+------------------------------------------------------------------------------+-------+-----------+-------------+-------------------------
+         1 | Agricola | Farmyard fun! | Uwe Rosenberg | https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700 |     1 | euro game | mallionaire | 2021-01-18 10:00:20.514
+(1 row)
+

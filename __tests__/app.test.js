@@ -51,7 +51,6 @@ describe('GET/api/reviews', () => {
     test('each element of the array should contain following properties', () => {
         return request(app).get('/api/reviews').then(({body}) => {
             expect(body.length).toBe(13)
-            console.log(body[0])
             body.forEach((review) => {
                 expect(review).toHaveProperty("owner" ,expect.any(String))
                 expect(review).toHaveProperty("title" ,expect.any(String))
@@ -84,6 +83,37 @@ describe('GET/api/reviews', () => {
     test('date is ordered in desc order', () => {
         return request(app).get('/api/reviews').then(({body}) => {
             expect(body).toBeSortedBy('created_at', {descending: true})
+        })
+    });
+});
+
+describe('GET/api/reviews:review_id', () => {
+    test('should return a status code of 200', () => {
+        return request(app).get('/api/reviews/1').expect(200)
+    });
+    test('should contain the following keys', () => {
+        return request(app).get('/api/reviews/1').then(({body}) => {
+            expect(body).toHaveProperty("review_id", expect.any(Number))
+            expect(body).toHaveProperty("title", expect.any(String))
+            expect(body).toHaveProperty("review_body", expect.any(String))
+            expect(body).toHaveProperty("designer", expect.any(String))
+            expect(body).toHaveProperty("review_img_url", expect.any(String))
+            expect(body).toHaveProperty("votes", expect.any(Number))
+            expect(body).toHaveProperty("category", expect.any(String))
+            expect(body).toHaveProperty("owner", expect.any(String))
+            expect(body).toHaveProperty("created_at", expect.any(String))
+        })
+    });
+    //error handling
+    test('if id is valid but not found returns 404 ID not found', () => {
+        return request(app).get('/api/reviews/14').expect(404).then(({text}) => {
+            expect(text).toBe("Review Id not found")
+        })
+    });
+    test('if ID is not valid, returns 400 Not valid ID', () => {
+        return request(app).get('/api/reviews/cheese').expect(400).then(({body}) => {
+            console.log(body)
+            expect(body.msg).toBe("Not valid Review Id")
         })
     });
 });
