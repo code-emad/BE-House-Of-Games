@@ -29,4 +29,16 @@ category,
 owner,
 created_at
 FROM reviews
-WHERE review_id = 1;
+WHERE review_id = 1
+;
+
+SELECT
+comment_id,
+votes,
+created_at,
+author,
+body,
+review_id
+FROM comments
+WHERE review_id = 2
+;
