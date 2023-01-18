@@ -1,3 +1,4 @@
+const { response } = require('./app')
 const db = require('./db/connection')
 
 module.exports.fetchCategories = () => {
@@ -39,7 +40,14 @@ module.exports.fetchReviewById = (reviewID) => {
     FROM reviews
     WHERE review_id = $1
     ;`
-    return db.query(sqlString, [reviewID])
+    return db.query(sqlString, [reviewID]).then(({rows, rowCount}) => {
+        if (rowCount > 0) {
+            return rows
+        }
+        else if (rowCount === 0) { 
+            return Promise.reject({status: 404, msg: 'Review Id not found'})
+        }
+    })
 }
 
 module.exports.fetchComByReviewId = (reviewId) => {
@@ -58,7 +66,6 @@ module.exports.fetchComByReviewId = (reviewId) => {
 }
 
 module.exports.addComment = (IdUserBody) => {
-    console.log(IdUserBody)
     let sqlString = `INSERT INTO comments 
     (body, review_id, author)
     VALUES ($3, $1, $2)

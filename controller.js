@@ -16,22 +16,14 @@ module.exports.getReviews = (request, response, next) => {
 
 module.exports.getReviewById = (request, response, next) => {
     let reviewId = request.params.review_id
-    fetchReviewById(reviewId).then(({rows, rowCount}) => {
-       if (rowCount > 0) {
-        response.status(200).send(rows[0])}
-        else if (rowCount === 0) {
-            return Promise.reject({status: 404, msg: 'Review Id not found'})
-        }
+    fetchReviewById(reviewId).then((reviewById) => {
+        response.status(200).send(reviewById[0])
     }).catch(next)
 }
 
 module.exports.getComByReviewId = (request, response, next) => {
     let reviewId = request.params.review_id
-    fetchReviewById(reviewId).then(({rows, rowCount}) => {
-        if (rowCount === 0) {
-            return Promise.reject({status: 404, msg: 'Review Id not found'})
-            }
-    })
+    fetchReviewById(reviewId).then(() => {})
     .then(() => {
         fetchComByReviewId(reviewId).then(({rows, rowCount}) => {
             response.status(200).send(rows)

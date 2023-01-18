@@ -166,19 +166,13 @@ describe('GET/api/reviews/:review_id/comments', () => {
     });
 });
 
-describe.only('POST/api/reviews/:review_id/comments', () => {
+describe('POST/api/reviews/:review_id/comments', () => {
     let validBody = {username: 'dav3rid', body: 'This game was not my cup of tea'}
     test('should return 201 when valid body is sent', () => {
         return request(app).post('/api/reviews/1/comments').send(validBody)
         .expect(201)
     });
-    test('should return an array', () => {
-        return request(app).post('/api/reviews/1/comments').send(validBody)
-        .then(({body}) => {
-            expect(Array.isArray(body)).toBe(true)
-        })
-    });
-    test.only('should return the posted comment', () => {
+    test('should return the posted comment', () => {
         return request(app).post('/api/reviews/1/comments').send(validBody)
         .then(({body}) => {
             expect(body).toHaveProperty('comment_id', 7)
