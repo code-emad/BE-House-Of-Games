@@ -56,3 +56,13 @@ module.exports.fetchComByReviewId = (reviewId) => {
     ;`
     return db.query(sqlString, [reviewId])
 }
+
+module.exports.addComment = (IdUserBody) => {
+    console.log(IdUserBody)
+    let sqlString = `INSERT INTO comments 
+    (body, review_id, author)
+    VALUES ($3, $1, $2)
+    RETURNING *;
+    `
+    return db.query(sqlString, IdUserBody)
+}

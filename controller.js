@@ -1,5 +1,6 @@
 const db = require('./db/connection')
-const {fetchCategories, fetchReviews, fetchReviewById, fetchComByReviewId} = require('./model')
+const {fetchCategories, fetchReviews, fetchReviewById, fetchComByReviewId,
+addComment} = require('./model')
 
 module.exports.getCategories = (request, response, next) => {
     fetchCategories().then((categories) => {
@@ -36,6 +37,16 @@ module.exports.getComByReviewId = (request, response, next) => {
             response.status(200).send(rows)
         })
     }).catch(next)
+}
+
+module.exports.postComment = (request, response, next) => {
+    let reviewId = request.params.review_id
+    let username = request.body.username
+    let bodyPost = request.body.body
+        
+    addComment([reviewId, username, bodyPost]).then(({rows}) => {
+        response.status(201).send(rows[0])
+    })
 }
 
 

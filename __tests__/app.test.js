@@ -161,9 +161,33 @@ describe('GET/api/reviews/:review_id/comments', () => {
     });
     test('if id is valid but no comments found, return an empty array', () => {
         return request(app).get('/api/reviews/1/comments').expect(200).then(({body}) => {
-     
             expect(body).toEqual([])
         })        
+    });
+});
+
+describe.only('POST/api/reviews/:review_id/comments', () => {
+    let validBody = {username: 'dav3rid', body: 'This game was not my cup of tea'}
+    test('should return 201 when valid body is sent', () => {
+        return request(app).post('/api/reviews/1/comments').send(validBody)
+        .expect(201)
+    });
+    test('should return an array', () => {
+        return request(app).post('/api/reviews/1/comments').send(validBody)
+        .then(({body}) => {
+            expect(Array.isArray(body)).toBe(true)
+        })
+    });
+    test.only('should return the posted comment', () => {
+        return request(app).post('/api/reviews/1/comments').send(validBody)
+        .then(({body}) => {
+            expect(body).toHaveProperty('comment_id', 7)
+            expect(body).toHaveProperty('body', 'This game was not my cup of tea')
+            expect(body).toHaveProperty('review_id', 1)
+            expect(body).toHaveProperty('author', 'dav3rid')
+            expect(body).toHaveProperty('votes', 0)
+            expect(body).toHaveProperty('created_at', expect.any(String))
+        })
     });
 });
 
