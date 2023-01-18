@@ -40,6 +40,19 @@ module.exports.fetchReviewById = (reviewID) => {
     WHERE review_id = $1
     ;`
     return db.query(sqlString, [reviewID])
+}
 
-
+module.exports.fetchComByReviewId = (reviewId) => {
+    let sqlString = `SELECT
+    comment_id,
+    votes,
+    created_at,
+    author,
+    body,
+    review_id
+    FROM comments
+    WHERE review_id = $1
+    ORDER BY created_at DESC
+    ;`
+    return db.query(sqlString, [reviewId])
 }

@@ -1,5 +1,5 @@
 const db = require('./db/connection')
-const {fetchCategories, fetchReviews, fetchReviewById} = require('./model')
+const {fetchCategories, fetchReviews, fetchReviewById, fetchComByReviewId} = require('./model')
 
 module.exports.getCategories = (request, response, next) => {
     fetchCategories().then((categories) => {
@@ -22,7 +22,20 @@ module.exports.getReviewById = (request, response, next) => {
             return Promise.reject({status: 404, msg: 'Review Id not found'})
         }
     }).catch(next)
-    
+}
+
+module.exports.getComByReviewId = (request, response, next) => {
+    let reviewId = request.params.review_id
+    fetchReviewById(reviewId).then(({rows, rowCount}) => {
+        if (rowCount === 0) {
+            return Promise.reject({status: 404, msg: 'Review Id not found'})
+            }
+    })
+    .then(() => {
+        fetchComByReviewId(reviewId).then(({rows, rowCount}) => {
+            response.status(200).send(rows)
+        })
+    }).catch(next)
 }
 
 

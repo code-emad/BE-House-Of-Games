@@ -1,5 +1,5 @@
 const express = require('express');
-const { getCategories, getReviews, getReviewById } = require('./controller') 
+const { getCategories, getReviews, getReviewById, getComByReviewId } = require('./controller') 
 const app = express();
 
 app.use(express.json())
@@ -10,7 +10,7 @@ app.get('/api/reviews', getReviews)
 
 app.get('/api/reviews/:review_id', getReviewById)
 
-
+app.get('/api/reviews/:review_id/comments', getComByReviewId)
 
 //error handlers
 app.use((request, response, next) => {
@@ -18,20 +18,29 @@ app.use((request, response, next) => {
 })
 
 app.use((error, request, response, next) => {
+    if (error.status) {
     response.status(error.status).send(error.msg)
+    }
+    else {
+        next(error)
+    }
 })
 
 app.use((error, request, response, next) => {
-if (error.code === 'ERR_HTTP_INVALID_STATUS_CODE') {
+if (error.code === '22P02') {
     response.status(400).send({msg: 'Not valid Review Id'})
 }
-next(error)
+else {
+    next(error)
+}
 })
 
 app.use((error, request, response, next) => {
-    console.log(error.code)
+    console.log(error)
     response.status(500).send({msg: "Internal Server Error"})
 }) 
+
+
 
 
 module.exports = app

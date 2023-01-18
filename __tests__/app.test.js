@@ -112,9 +112,58 @@ describe('GET/api/reviews:review_id', () => {
     });
     test('if ID is not valid, returns 400 Not valid ID', () => {
         return request(app).get('/api/reviews/cheese').expect(400).then(({body}) => {
-            console.log(body)
             expect(body.msg).toBe("Not valid Review Id")
         })
+    });
+});
+
+describe('GET/api/reviews/:review_id/comments', () => {
+    test('should return a status code of 200 ', () => {
+        return request(app).get('/api/reviews/2/comments').expect(200)
+    });
+    test('should return an array', () => {
+        return request(app).get('/api/reviews/2/comments').then(({body}) => {
+            expect(Array.isArray(body)).toEqual(true)
+        })
+    });
+    test('each element in the array should contain the following keys', () => {
+        return request(app).get('/api/reviews/2/comments').then(({body}) => {
+            expect(body.length).toBe(3)
+            body.forEach((comment) => {
+                expect(comment).toEqual(
+                    expect.objectContaining({
+                       comment_id: expect.any(Number),
+                       votes: expect.any(Number),
+                       created_at: expect.any(String),
+                       author: expect.any(String),
+                       body: expect.any(String),
+                       review_id: expect.any(Number)
+                    })
+                )
+            })
+        })
+    });
+    test('date is ordered in desc order', () => {
+        return request(app).get('/api/reviews/2/comments').then(({body}) => {
+            expect(body).toBeSortedBy('created_at', {descending: true})
+        })
+    });
+    //error handling
+    test('if id is valid but not found returns 404 ID not found', () => {
+        return request(app).get('/api/reviews/14/comments').expect(404).then(({text}) => {
+            expect(text).toBe("Review Id not found")
+        })
+    });
+    test('if id is not valid, returns 400 not valid Id ', () => {
+        return request(app).get('/api/reviews/cheese/comments').expect(400).then(({body}) => {
+            expect(body.msg).toBe("Not valid Review Id")
+        })
+    });
+    test('if id is valid but no comments found, return an empty array', () => {
+        return request(app).get('/api/reviews/1/comments').expect(200).then(({body}) => {
+     
+            expect(body).toEqual([])
+        })        
     });
 });
 
