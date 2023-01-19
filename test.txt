@@ -21,3 +21,16 @@ You are now connected to database "nc_games_test" as user "emad".
          1 | Agricola | Farmyard fun! | Uwe Rosenberg | https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700 |     1 | euro game | mallionaire | 2021-01-18 10:00:20.514
 (1 row)
 
+ comment_id | votes |       created_at        |   author    |                                   body                                    | review_id 
+------------+-------+-------------------------+-------------+---------------------------------------------------------------------------+-----------
+          1 |    16 | 2017-11-22 12:43:33.389 | bainesface  | I loved this game too!                                                    |         2
+          4 |    16 | 2017-11-22 12:36:03.389 | bainesface  | EPIC board game!                                                          |         2
+          5 |    13 | 2021-01-18 10:24:05.41  | mallionaire | Now this is a story all about how, board games turned my life upside down |         2
+(3 rows)
+
+ review_id |  title   | category  |   designer    |    owner    |  review_body  |                                review_img_url                                |       created_at        | votes 
+-----------+----------+-----------+---------------+-------------+---------------+------------------------------------------------------------------------------+-------------------------+-------
+         1 | Agricola | euro game | Uwe Rosenberg | mallionaire | Farmyard fun! | https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700 | 2021-01-18 10:00:20.514 |    11
+(1 row)
+
+UPDATE 1

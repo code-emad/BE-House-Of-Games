@@ -2,12 +2,12 @@ const { response } = require('./app')
 const db = require('./db/connection')
 
 module.exports.fetchCategories = () => {
-let sqlString = 'SELECT * FROM categories;'
+    const sqlString = 'SELECT * FROM categories;'
     return db.query(sqlString)
 }
 
 module.exports.fetchReviews = () => {
-    let sqlString = `SELECT 
+    const sqlString = `SELECT 
     A.owner,
     A.title,
     A.review_id,
@@ -27,7 +27,7 @@ module.exports.fetchReviews = () => {
 }
 
 module.exports.fetchReviewById = (reviewID) => {
-    let sqlString = `SELECT 
+    const sqlString = `SELECT 
     review_id,
     title,
     review_body,
@@ -51,7 +51,7 @@ module.exports.fetchReviewById = (reviewID) => {
 }
 
 module.exports.fetchComByReviewId = (reviewId) => {
-    let sqlString = `SELECT
+    const sqlString = `SELECT
     comment_id,
     votes,
     created_at,
@@ -66,14 +66,31 @@ module.exports.fetchComByReviewId = (reviewId) => {
 }
 
 module.exports.addComment = (IdUserBody) => {
-    let sqlString = `INSERT INTO comments 
+    const sqlString = `INSERT INTO comments 
     (body, review_id, author)
     VALUES ($3, $1, $2)
-    RETURNING *;
-    `
+    RETURNING *
+    ;`
     return db.query(sqlString, IdUserBody).then(({rows, rowCount}) => {
             return rows
     })
+}
+
+module.exports.alterVotesByReview = (IdVote) => {
+    const sqlString = `UPDATE reviews
+    SET votes = votes + $2
+    WHERE review_id = $1
+    RETURNING *
+    ;`
+    return db.query(sqlString, IdVote).then(({rows, rowCount}) => {
+        if (rowCount > 0) {
+            return {rows}
+        }
+        else if (rowCount === 0) {
+            return Promise.reject({status: 404, msg: 'Review Id not found'})
+        }
+    })
+
 }
 
 
