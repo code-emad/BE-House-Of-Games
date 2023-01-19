@@ -23,12 +23,14 @@ module.exports.getReviewById = (request, response, next) => {
 
 module.exports.getComByReviewId = (request, response, next) => {
     let reviewId = request.params.review_id
-    fetchReviewById(reviewId).then(() => {})
+    fetchReviewById(reviewId)
     .then(() => {
-        fetchComByReviewId(reviewId).then(({rows, rowCount}) => {
+        return fetchComByReviewId(reviewId)
+    })
+    .then(({rows, rowCount}) => {
             response.status(200).send(rows)
-        })
-    }).catch(next)
+    })
+    .catch(next)
 }
 
 module.exports.postComment = (request, response, next) => {
@@ -36,9 +38,14 @@ module.exports.postComment = (request, response, next) => {
     let username = request.body.username
     let bodyPost = request.body.body
         
-    addComment([reviewId, username, bodyPost]).then(({rows}) => {
+    fetchReviewById(reviewId)
+    .then(() => {
+        return addComment([reviewId, username, bodyPost])
+    })
+    .then((rows) => {
         response.status(201).send(rows[0])
     })
+    .catch(next)
 }
 
 

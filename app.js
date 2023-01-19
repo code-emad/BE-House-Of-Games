@@ -32,13 +32,16 @@ app.use((error, request, response, next) => {
 if (error.code === '22P02') {
     response.status(400).send({msg: 'Not valid Review Id'})
 }
+if (error.code === '23502' || error.code === '23503') {
+    response.status(400).send({msg: 'Bad Request - Invalid info sent'})
+}
 else {
     next(error)
 }
 })
 
 app.use((error, request, response, next) => {
-    console.log(error)
+    console.log(error, "last error handler")
     response.status(500).send({msg: "Internal Server Error"})
 }) 
 

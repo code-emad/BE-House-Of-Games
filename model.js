@@ -71,5 +71,17 @@ module.exports.addComment = (IdUserBody) => {
     VALUES ($3, $1, $2)
     RETURNING *;
     `
-    return db.query(sqlString, IdUserBody)
+    return db.query(sqlString, IdUserBody).then(({rows, rowCount}) => {
+            return rows
+    })
 }
+
+
+
+
+
+
+
+
+
+
