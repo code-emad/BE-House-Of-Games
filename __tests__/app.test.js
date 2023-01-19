@@ -297,15 +297,13 @@ describe('PATCH/api/reviews/:review_id', () => {
             expect(body).toHaveProperty('votes', 11)
         })
     });
-
 });
 
+// describe('GET/api/users', () => {
+//     test('should return a 200', () => {
+//         return request(app).get('/api/users')
+//         .expect(200)
+//     });
+// });
 
 
-// test('if sent body that does not have valid username, fails with 400 bad request', () => {
-//     return request(app).post('/api/reviews/1/comments').send({username: 'fakeAcc', body: 'This game was not my cup of tea'})
-//     .expect(400).then(({body}) => {
-//         expect(body.msg).toBe("Bad Request - Invalid info sent")
-//     })
-// });
-// });
