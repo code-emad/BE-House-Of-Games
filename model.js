@@ -1,12 +1,12 @@
 const { response } = require('./app')
 const db = require('./db/connection')
 
-module.exports.fetchCategories = () => {
+exports.fetchCategories = () => {
     const sqlString = 'SELECT * FROM categories;'
     return db.query(sqlString)
 }
 
-module.exports.fetchReviews = () => {
+exports.fetchReviews = () => {
     const sqlString = `SELECT 
     A.owner,
     A.title,
@@ -26,7 +26,7 @@ module.exports.fetchReviews = () => {
     return db.query(sqlString)
 }
 
-module.exports.fetchReviewById = (reviewID) => {
+exports.fetchReviewById = (reviewID) => {
     const sqlString = `SELECT 
     review_id,
     title,
@@ -50,7 +50,7 @@ module.exports.fetchReviewById = (reviewID) => {
     })
 }
 
-module.exports.fetchComByReviewId = (reviewId) => {
+exports.fetchComByReviewId = (reviewId) => {
     const sqlString = `SELECT
     comment_id,
     votes,
@@ -65,7 +65,7 @@ module.exports.fetchComByReviewId = (reviewId) => {
     return db.query(sqlString, [reviewId])
 }
 
-module.exports.addComment = (IdUserBody) => {
+exports.addComment = (IdUserBody) => {
     const sqlString = `INSERT INTO comments 
     (body, review_id, author)
     VALUES ($3, $1, $2)
@@ -76,7 +76,7 @@ module.exports.addComment = (IdUserBody) => {
     })
 }
 
-module.exports.alterVotesByReview = (IdVote) => {
+exports.alterVotesByReview = (IdVote) => {
     const sqlString = `UPDATE reviews
     SET votes = votes + $2
     WHERE review_id = $1
@@ -92,7 +92,7 @@ module.exports.alterVotesByReview = (IdVote) => {
     })
 }
 
-module.exports.fetchUsers = () => {
+exports.fetchUsers = () => {
     const sqlString = `SELECT *
     FROM users
     ;`
