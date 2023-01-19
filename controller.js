@@ -1,5 +1,6 @@
 const db = require('./db/connection')
-const {fetchCategories, fetchReviews, fetchReviewById, fetchComByReviewId} = require('./model')
+const {fetchCategories, fetchReviews, fetchReviewById, fetchComByReviewId,
+addComment} = require('./model')
 
 module.exports.getCategories = (request, response, next) => {
     fetchCategories().then((categories) => {
@@ -15,27 +16,36 @@ module.exports.getReviews = (request, response, next) => {
 
 module.exports.getReviewById = (request, response, next) => {
     let reviewId = request.params.review_id
-    fetchReviewById(reviewId).then(({rows, rowCount}) => {
-       if (rowCount > 0) {
-        response.status(200).send(rows[0])}
-        else if (rowCount === 0) {
-            return Promise.reject({status: 404, msg: 'Review Id not found'})
-        }
+    fetchReviewById(reviewId).then((reviewById) => {
+        response.status(200).send(reviewById[0])
     }).catch(next)
 }
 
 module.exports.getComByReviewId = (request, response, next) => {
     let reviewId = request.params.review_id
-    fetchReviewById(reviewId).then(({rows, rowCount}) => {
-        if (rowCount === 0) {
-            return Promise.reject({status: 404, msg: 'Review Id not found'})
-            }
-    })
+    fetchReviewById(reviewId)
     .then(() => {
-        fetchComByReviewId(reviewId).then(({rows, rowCount}) => {
+        return fetchComByReviewId(reviewId)
+    })
+    .then(({rows, rowCount}) => {
             response.status(200).send(rows)
-        })
-    }).catch(next)
+    })
+    .catch(next)
+}
+
+module.exports.postComment = (request, response, next) => {
+    let reviewId = request.params.review_id
+    let username = request.body.username
+    let bodyPost = request.body.body
+        
+    fetchReviewById(reviewId)
+    .then(() => {
+        return addComment([reviewId, username, bodyPost])
+    })
+    .then((rows) => {
+        response.status(201).send(rows[0])
+    })
+    .catch(next)
 }
 
 

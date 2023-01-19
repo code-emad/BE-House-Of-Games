@@ -161,9 +161,58 @@ describe('GET/api/reviews/:review_id/comments', () => {
     });
     test('if id is valid but no comments found, return an empty array', () => {
         return request(app).get('/api/reviews/1/comments').expect(200).then(({body}) => {
-     
             expect(body).toEqual([])
         })        
+    });
+});
+
+describe.only('POST/api/reviews/:review_id/comments', () => {
+    let validBody = {username: 'dav3rid', body: 'This game was not my cup of tea'}
+    test('should return 201 when valid body is sent', () => {
+        return request(app).post('/api/reviews/1/comments').send(validBody)
+        .expect(201)
+    });
+    test('should return the posted comment', () => {
+        return request(app).post('/api/reviews/1/comments').send(validBody)
+        .then(({body}) => {
+            expect(body).toHaveProperty('comment_id', 7)
+            expect(body).toHaveProperty('body', 'This game was not my cup of tea')
+            expect(body).toHaveProperty('review_id', 1)
+            expect(body).toHaveProperty('author', 'dav3rid')
+            expect(body).toHaveProperty('votes', 0)
+            expect(body).toHaveProperty('created_at', expect.any(String))
+        })
+    });
+    //error handling
+    test('if id valid but not found returns 404 ID not found (valid body send)', () => {
+        return request(app).post('/api/reviews/14/comments').send(validBody)
+        .expect(404).then(({text}) => {
+            expect(text).toBe("Review Id not found")
+        })
+    });
+    test('if id is not valid, returns 400 not valid Id ', () => {
+        return request(app).post('/api/reviews/cheese/comments').send(validBody)
+        .expect(400).then(({body}) => {
+            expect(body.msg).toBe("Not valid Review Id")
+        })
+    });
+    test('if sent body does not contain username key, fails with 400 bad request', () => {
+        return request(app).post('/api/reviews/1/comments').send({body: 'failed'})
+        .expect(400).then(({body}) => {
+            expect(body.msg).toBe("Bad Request - Invalid info sent")
+        })
+    });
+    test('if sent body that does not contain body, fails with 400 bad request', () => {
+        return request(app).post('/api/reviews/1/comments').send({username: 'dav3rid'})
+        .expect(400).then(({body}) => {
+            expect(body.msg).toBe("Bad Request - Invalid info sent")
+        })
+    });
+    test('if sent body that does not have valid username, fails with 400 bad request', () => {
+        return request(app).post('/api/reviews/1/comments').send({username: 'fakeAcc', body: 'This game was not my cup of tea'})
+        .expect(400).then(({body}) => {
+            expect(body.msg).toBe("Bad Request - Invalid info sent")
+        })
     });
 });
 
