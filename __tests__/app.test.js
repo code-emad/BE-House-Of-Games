@@ -229,7 +229,7 @@ describe('POST/api/reviews/:review_id/comments', () => {
     });
 });
 
-describe.only('PATCH/api/reviews/:review_id', () => {
+describe('PATCH/api/reviews/:review_id', () => {
     const voteUp = {inc_votes: 10}
     const voteDown = {inc_votes: -10}
     test('should return a code of 200 when a valid body is sent', () => {
@@ -269,5 +269,43 @@ describe.only('PATCH/api/reviews/:review_id', () => {
             expect(body.msg).toBe('Not valid Review Id')
         });
     });
+    test('if sent body does not contain inc_votes property, fails with 400 bad request', () => {
+        return request(app).patch('/api/reviews/1').send({i_votes: 100})
+        .expect(400).then(({body}) => {
+            expect(body.msg).toBe("Bad Request - Invalid info sent")
+        });
+    });
+    test('if inc_votes contains an invalid value, fails with 400 bad request ', () => {
+        return request(app).patch('/api/reviews/1').send({i_votes: 'abc'})
+        .expect(400).then(({body}) => {
+            expect(body.msg).toBe("Bad Request - Invalid info sent")
+        });
+    });
+    test('can ignore extra properties and complete patch aslong as valid info is available', () => {
+    const voteUpWithExtraProperties = {inc_votes: 10, extraproperty: true}
+        return request(app).patch('/api/reviews/1').send(voteUpWithExtraProperties)
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toHaveProperty('review_id', 1)
+            expect(body).toHaveProperty('title', expect.any(String))
+            expect(body).toHaveProperty('category', expect.any(String))
+            expect(body).toHaveProperty('designer', expect.any(String))
+            expect(body).toHaveProperty('owner', expect.any(String))
+            expect(body).toHaveProperty('review_body', expect.any(String))
+            expect(body).toHaveProperty('review_img_url', expect.any(String))
+            expect(body).toHaveProperty('created_at', expect.any(String))
+            expect(body).toHaveProperty('votes', 11)
+        })
+    });
 
 });
+
+
+
+// test('if sent body that does not have valid username, fails with 400 bad request', () => {
+//     return request(app).post('/api/reviews/1/comments').send({username: 'fakeAcc', body: 'This game was not my cup of tea'})
+//     .expect(400).then(({body}) => {
+//         expect(body.msg).toBe("Bad Request - Invalid info sent")
+//     })
+// });
+// });
