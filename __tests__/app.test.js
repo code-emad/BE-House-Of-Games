@@ -299,11 +299,28 @@ describe('PATCH/api/reviews/:review_id', () => {
     });
 });
 
-// describe('GET/api/users', () => {
-//     test('should return a 200', () => {
-//         return request(app).get('/api/users')
-//         .expect(200)
-//     });
-// });
+describe.only('GET/api/users', () => {
+    test('should return a 200', () => {
+        return request(app).get('/api/users')
+        .expect(200)
+    });
+    test('should return an array', () => {
+        return request(app).get('/api/users')
+    .then(({body}) => {
+        expect(Array.isArray(body)).toBe(true)
+        })
+    });
+    test('should return an array of objects with the following properties', () => {
+        return request(app).get('/api/users')
+    .then(({body}) => { 
+        expect(body.length).toBe(4)
+        body.forEach((user) =>{
+            expect(user).toHaveProperty('username', expect.any(String))
+            expect(user).toHaveProperty('name', expect.any(String))
+            expect(user).toHaveProperty('avatar_url', expect.any(String))
+            })
+        })
+    });
+});
 
 

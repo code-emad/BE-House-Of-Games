@@ -90,7 +90,13 @@ module.exports.alterVotesByReview = (IdVote) => {
             return Promise.reject({status: 404, msg: 'Review Id not found'})
         }
     })
+}
 
+module.exports.fetchUsers = () => {
+    const sqlString = `SELECT *
+    FROM users
+    ;`
+    return db.query(sqlString)
 }
 
 

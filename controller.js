@@ -1,6 +1,6 @@
 const db = require('./db/connection')
 const {fetchCategories, fetchReviews, fetchReviewById, fetchComByReviewId,
-addComment, alterVotesByReview} = require('./model')
+addComment, alterVotesByReview, fetchUsers} = require('./model')
 
 module.exports.getCategories = (request, response, next) => {
     fetchCategories().then((categories) => {
@@ -57,7 +57,13 @@ module.exports.patchReview = (request, response, next) => {
         response.status(200).send(patchedReview)
     })
     .catch(next)
+}
 
+module.exports.getUsers = (request, response, next) => {
+    fetchUsers()
+    .then(({rows}) => {
+        response.status(200).send(rows)
+    })
 
 }
 
