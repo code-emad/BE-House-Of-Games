@@ -1,6 +1,6 @@
 const db = require('./db/connection')
 const {fetchCategories, fetchReviews, fetchReviewById, fetchComByReviewId,
-addComment} = require('./model')
+addComment, alterVotesByReview} = require('./model')
 
 module.exports.getCategories = (request, response, next) => {
     fetchCategories().then((categories) => {
@@ -15,14 +15,14 @@ module.exports.getReviews = (request, response, next) => {
 }
 
 module.exports.getReviewById = (request, response, next) => {
-    let reviewId = request.params.review_id
+    const reviewId = request.params.review_id
     fetchReviewById(reviewId).then((reviewById) => {
         response.status(200).send(reviewById[0])
     }).catch(next)
 }
 
 module.exports.getComByReviewId = (request, response, next) => {
-    let reviewId = request.params.review_id
+    const reviewId = request.params.review_id
     fetchReviewById(reviewId)
     .then(() => {
         return fetchComByReviewId(reviewId)
@@ -34,9 +34,9 @@ module.exports.getComByReviewId = (request, response, next) => {
 }
 
 module.exports.postComment = (request, response, next) => {
-    let reviewId = request.params.review_id
-    let username = request.body.username
-    let bodyPost = request.body.body
+    const reviewId = request.params.review_id
+    const username = request.body.username
+    const bodyPost = request.body.body
         
     fetchReviewById(reviewId)
     .then(() => {
@@ -46,6 +46,19 @@ module.exports.postComment = (request, response, next) => {
         response.status(201).send(rows[0])
     })
     .catch(next)
+}
+
+module.exports.patchReview = (request, response, next) => {
+    const reviewId = request.params.review_id
+    const voteAdjust = request.body.inc_votes
+
+    alterVotesByReview([reviewId, voteAdjust])
+    .then (({rows: [patchedReview]}) => {
+        response.status(200).send(patchedReview)
+    })
+    .catch(next)
+
+
 }
 
 

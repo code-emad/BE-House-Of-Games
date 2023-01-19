@@ -166,7 +166,7 @@ describe('GET/api/reviews/:review_id/comments', () => {
     });
 });
 
-describe.only('POST/api/reviews/:review_id/comments', () => {
+describe('POST/api/reviews/:review_id/comments', () => {
     let validBody = {username: 'dav3rid', body: 'This game was not my cup of tea'}
     test('should return 201 when valid body is sent', () => {
         return request(app).post('/api/reviews/1/comments').send(validBody)
@@ -184,6 +184,19 @@ describe.only('POST/api/reviews/:review_id/comments', () => {
         })
     });
     //error handling
+    test('can take a send request with extra properties and ignore them as long as valid info is contained', () => {
+    let validBodyWithExtraProperties = {username: 'dav3rid', body: 'This game was not my cup of tea', extra: "i'm an extra property"}    
+        return request(app).post('/api/reviews/1/comments').send(validBodyWithExtraProperties)
+        .expect(201)
+        .then(({body}) => {
+            expect(body).toHaveProperty('comment_id', 7)
+            expect(body).toHaveProperty('body', 'This game was not my cup of tea')
+            expect(body).toHaveProperty('review_id', 1)
+            expect(body).toHaveProperty('author', 'dav3rid')
+            expect(body).toHaveProperty('votes', 0)
+            expect(body).toHaveProperty('created_at', expect.any(String))
+        })
+    });
     test('if id valid but not found returns 404 ID not found (valid body send)', () => {
         return request(app).post('/api/reviews/14/comments').send(validBody)
         .expect(404).then(({text}) => {
@@ -216,3 +229,83 @@ describe.only('POST/api/reviews/:review_id/comments', () => {
     });
 });
 
+describe('PATCH/api/reviews/:review_id', () => {
+    const voteUp = {inc_votes: 10}
+    const voteDown = {inc_votes: -10}
+    test('should return a code of 200 when a valid body is sent', () => {
+        return request(app).patch('/api/reviews/1').send(voteUp)
+        .expect(200)
+    });
+    test('returns the updated review', () => {
+        return request(app).patch('/api/reviews/1').send(voteUp)
+        .then(({body}) => {
+            expect(body).toHaveProperty('review_id', 1)
+            expect(body).toHaveProperty('title', expect.any(String))
+            expect(body).toHaveProperty('category', expect.any(String))
+            expect(body).toHaveProperty('designer', expect.any(String))
+            expect(body).toHaveProperty('owner', expect.any(String))
+            expect(body).toHaveProperty('review_body', expect.any(String))
+            expect(body).toHaveProperty('review_img_url', expect.any(String))
+            expect(body).toHaveProperty('created_at', expect.any(String))
+            expect(body).toHaveProperty('votes', 11)
+        })
+    });
+    test('can take a a vote down that will take votes below 0', () => {
+        return request(app).patch('/api/reviews/1').send(voteDown)
+        .then(({body}) => {
+            expect(body).toHaveProperty('votes', -9)
+        })
+    });
+    //error handling
+    test('if id valid but not found, returns 404 ID not found (valid body sent', () => {
+        return request(app).patch('/api/reviews/14').send(voteUp)
+        .expect(404).then(({text}) => {
+            expect(text).toBe("Review Id not found")
+        })
+    });
+    test('if id not not valid, returns 400 not valid ID (valid body sent)', () => {
+        return request(app).patch('/api/reviews/cheese').send(voteUp)
+        .expect(400).then(({body}) => {
+            expect(body.msg).toBe('Not valid Review Id')
+        });
+    });
+    test('if sent body does not contain inc_votes property, fails with 400 bad request', () => {
+        return request(app).patch('/api/reviews/1').send({i_votes: 100})
+        .expect(400).then(({body}) => {
+            expect(body.msg).toBe("Bad Request - Invalid info sent")
+        });
+    });
+    test('if inc_votes contains an invalid value, fails with 400 bad request ', () => {
+        return request(app).patch('/api/reviews/1').send({i_votes: 'abc'})
+        .expect(400).then(({body}) => {
+            expect(body.msg).toBe("Bad Request - Invalid info sent")
+        });
+    });
+    test('can ignore extra properties and complete patch aslong as valid info is available', () => {
+    const voteUpWithExtraProperties = {inc_votes: 10, extraproperty: true}
+        return request(app).patch('/api/reviews/1').send(voteUpWithExtraProperties)
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toHaveProperty('review_id', 1)
+            expect(body).toHaveProperty('title', expect.any(String))
+            expect(body).toHaveProperty('category', expect.any(String))
+            expect(body).toHaveProperty('designer', expect.any(String))
+            expect(body).toHaveProperty('owner', expect.any(String))
+            expect(body).toHaveProperty('review_body', expect.any(String))
+            expect(body).toHaveProperty('review_img_url', expect.any(String))
+            expect(body).toHaveProperty('created_at', expect.any(String))
+            expect(body).toHaveProperty('votes', 11)
+        })
+    });
+
+});
+
+
+
+// test('if sent body that does not have valid username, fails with 400 bad request', () => {
+//     return request(app).post('/api/reviews/1/comments').send({username: 'fakeAcc', body: 'This game was not my cup of tea'})
+//     .expect(400).then(({body}) => {
+//         expect(body.msg).toBe("Bad Request - Invalid info sent")
+//     })
+// });
+// });

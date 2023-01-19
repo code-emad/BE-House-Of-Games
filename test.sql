@@ -42,3 +42,8 @@ review_id
 FROM comments
 WHERE review_id = 2
 ;
+
+UPDATE reviews
+    SET votes = votes + 10
+    WHERE review_id = 1
+    RETURNING *;
