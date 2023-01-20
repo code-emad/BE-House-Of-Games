@@ -56,17 +56,21 @@ if(orderBy !== undefined && !['ASC', 'DESC'].includes(orderBy.toUpperCase()) && 
 
 exports.fetchReviewById = (reviewID) => {
     const sqlString = `SELECT 
-    review_id,
-    title,
-    review_body,
-    designer,
-    review_img_url,
-    votes,
-    category,
-    owner,
-    created_at
-    FROM reviews
-    WHERE review_id = $1
+    A.review_id,
+    A.title,
+    A.review_body,
+    A.designer,
+    A.review_img_url,
+    A.votes,
+    A.category,
+    A.owner,
+    A.created_at,
+    CAST(COUNT(B.review_id) AS int) AS comment_count
+    FROM reviews A
+    LEFT JOIN comments B
+    ON A.review_id = B.review_id
+    WHERE A.review_id = $1
+    GROUP BY A.review_id
     ;`
     return db.query(sqlString, [reviewID]).then(({rows, rowCount}) => {
         if (rowCount > 0) {

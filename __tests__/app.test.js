@@ -92,7 +92,8 @@ describe('GET/api/reviews:review_id', () => {
         return request(app).get('/api/reviews/1').expect(200)
     });
     test('should contain the following keys', () => {
-        return request(app).get('/api/reviews/1').then(({body}) => {
+        return request(app).get('/api/reviews/1')
+        .then(({body}) => {
             expect(body).toHaveProperty("review_id", expect.any(Number))
             expect(body).toHaveProperty("title", expect.any(String))
             expect(body).toHaveProperty("review_body", expect.any(String))
@@ -365,8 +366,26 @@ describe('GET/api/reviews(queries)', () => {
         .then(({text}) => {
             expect(text).toEqual("Bad Request - Invalid query parameters");
         })
-
     });
 });
+
+describe('GET/api/reviews/review_id', () => {
+    test('now has a comment count column', () => {
+        return request(app).get('/api/reviews/1')
+        .then(({body}) => {
+            expect(body).toHaveProperty("comment_count", 0)
+        })
+    });
+    test('now has a comment count column, testing another id', () => {
+        return request(app).get('/api/reviews/2')
+        .then(({body}) => {
+            expect(body).toHaveProperty("comment_count", 3)
+        })
+    });
+});
+
+
+
+
 
 

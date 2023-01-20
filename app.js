@@ -24,8 +24,6 @@ app.use((request, response, next) => {
 })
 
 app.use((error, request, response, next) => {
-    console.log(error.status)
-    console.log(error.msg)
     if (error.status) {
     response.status(error.status).send(error.msg)
     }
