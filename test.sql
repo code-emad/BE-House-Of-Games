@@ -81,9 +81,24 @@ FROM categories;
         ORDER BY A.title DESC
         ;
 
-        SELECT reviews.*, CAST(COUNT(comments.review_id) AS INT) AS comment_count
-      FROM reviews
-      LEFT JOIN comments
-      ON comments.review_id = reviews.review_id
-      GROUP BY reviews.review_id
-      ORDER BY reviews.title DESC;
+SELECT 
+A.review_id,
+A.title,
+A.review_body,
+A.designer,
+A.review_img_url,
+A.votes,
+A.category,
+A.owner,
+A.created_at,
+CAST(COUNT(B.review_id) AS int) AS comment_count
+FROM reviews A
+LEFT JOIN comments B
+ON A.review_id = B.review_id
+WHERE A.review_id = 2
+GROUP BY A.review_id
+
+;
+
+SELECT *
+FROM comments;
