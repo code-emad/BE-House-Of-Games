@@ -112,8 +112,10 @@ describe('GET/api/reviews:review_id', () => {
         })
     });
     test('if ID is not valid, returns 400 Not valid ID', () => {
-        return request(app).get('/api/reviews/cheese').expect(400).then(({body}) => {
-            expect(body.msg).toBe("Not valid Review Id")
+        return request(app).get('/api/reviews/cheese')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Not valid Id")
         })
     });
 });
@@ -157,7 +159,7 @@ describe('GET/api/reviews/:review_id/comments', () => {
     });
     test('if id is not valid, returns 400 not valid Id ', () => {
         return request(app).get('/api/reviews/cheese/comments').expect(400).then(({body}) => {
-            expect(body.msg).toBe("Not valid Review Id")
+            expect(body.msg).toBe("Not valid Id")
         })
     });
     test('if id is valid but no comments found, return an empty array', () => {
@@ -207,7 +209,7 @@ describe('POST/api/reviews/:review_id/comments', () => {
     test('if id is not valid, returns 400 not valid Id ', () => {
         return request(app).post('/api/reviews/cheese/comments').send(validBody)
         .expect(400).then(({body}) => {
-            expect(body.msg).toBe("Not valid Review Id")
+            expect(body.msg).toBe("Not valid Id")
         })
     });
     test('if sent body does not contain username key, fails with 400 bad request', () => {
@@ -267,7 +269,7 @@ describe('PATCH/api/reviews/:review_id', () => {
     test('if id not not valid, returns 400 not valid ID (valid body sent)', () => {
         return request(app).patch('/api/reviews/cheese').send(voteUp)
         .expect(400).then(({body}) => {
-            expect(body.msg).toBe('Not valid Review Id')
+            expect(body.msg).toBe('Not valid Id')
         });
     });
     test('if sent body does not contain inc_votes property, fails with 400 bad request', () => {
@@ -380,6 +382,45 @@ describe('GET/api/reviews/review_id', () => {
         return request(app).get('/api/reviews/2')
         .then(({body}) => {
             expect(body).toHaveProperty("comment_count", 3)
+        })
+    });
+});
+
+describe('DELETE/api/comments/:comment_id', () => {
+    test('returns a 204', () => {
+        return request(app).delete('/api/comments/1')
+        .expect(204)
+    });
+    test.only('deletes the comment specified in params', () => {
+        return request(app).get('/api/reviews/2/comments')
+        .then(({body}) => {
+            expect(body.length).toBe(3)
+            return request(app).delete('/api/comments/1')
+            .expect(204)
+        })
+        .then((body) => {
+            expect(body.noContent).toBe(true)
+            return request(app).get('/api/reviews/2/comments')
+        })
+        .then(({body}) => {
+            expect(body.length).toBe(2)
+            body.forEach((comment) => {
+                expect(comment.comment_id).not.toBe(2)
+            })
+        })
+    });
+    test('if valid comment id inserted (but comment does not exist), returns 404, bad request', () => {
+        return request(app).delete('/api/comments/7')
+        .expect(404)
+        .then(({text}) => {
+            expect(text).toEqual("Comment Id not found");
+        })
+    });
+    test('if invalid comment id inserted, returns 400', () => {
+        return request(app).delete('/api/comments/cheese')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Not valid Id")
         })
     });
 });

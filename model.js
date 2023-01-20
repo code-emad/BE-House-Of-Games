@@ -131,6 +131,20 @@ exports.fetchUsers = () => {
     return db.query(sqlString)
 }
 
+exports.removeComment = (commentId) => {
+    const sqlString = `DELETE FROM comments
+    WHERE comment_id = $1
+    RETURNING *
+    ;`
+
+    return db.query(sqlString, [commentId])
+    .then(({rowCount}) => {
+        if (rowCount === 0) {
+            return Promise.reject({status: 404, msg: 'Comment Id not found'})
+        }
+    })
+}
+
 
 
 
