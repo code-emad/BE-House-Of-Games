@@ -299,7 +299,7 @@ describe('PATCH/api/reviews/:review_id', () => {
     });
 });
 
-describe.only('GET/api/users', () => {
+describe('GET/api/users', () => {
     test('should return a 200', () => {
         return request(app).get('/api/users')
         .expect(200)
@@ -320,6 +320,52 @@ describe.only('GET/api/users', () => {
             expect(user).toHaveProperty('avatar_url', expect.any(String))
             })
         })
+    });
+});
+
+describe('GET/api/reviews(queries)', () => {
+    test('should be able to filter by a valid category', () => {
+        return request(app).get('/api/reviews/?category=euro game')
+        .then(({body}) => {
+            expect(body.length).toBe(1)
+        })
+    });
+    test('should be able to sort by valid column if queried', () => {
+        return request(app).get('/api/reviews/?sort_by=title')
+        .then(({body}) => {
+            expect(body.length).toBe(13)
+            expect(body).toBeSortedBy('title', {descending: true})
+        })
+    });
+    test('can take another query that will choose  asc or desc accordingly', () => {
+        return request(app).get('/api/reviews?sort_by=title&order=asc')
+        .then(({body}) => {
+            expect(body.length).toBe(13)
+            expect(body).toBeSortedBy('title', {ascending: true})
+        })
+    })
+    //error handling
+    test('if incorrect sort by input, returns 400 Bad Request', () => {
+        return request(app).get('/api/reviews/?sort_by= invalid')
+        .expect(400)
+        .then(({text}) => {
+            expect(text).toBe("Bad Request - Invalid query parameters")
+        })
+    });
+    test('if filter category not an available category (from categories table), results in 400 Bad Request', () => {
+        return request(app).get('/api/reviews?category=invalid')
+        .expect(400)
+        .then(({text}) => {
+            expect(text).toEqual("Bad Request - Invalid query parameters");
+        })
+    });
+    test('if order has invalid input (not ASC or DESC), results in 400 Bad Request', () => {
+        return request(app).get('/api/reviews?order=invalid')
+        .expect(400)
+        .then(({text}) => {
+            expect(text).toEqual("Bad Request - Invalid query parameters");
+        })
+
     });
 });
 

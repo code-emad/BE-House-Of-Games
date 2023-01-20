@@ -8,11 +8,12 @@ exports.getCategories = (request, response, next) => {
     }).catch(next);
     }
 
-exports.getReviews = (request, response, next) => {
-    fetchReviews().then(({rows}) => {
-        response.status(200).send(rows)
-    })
-}
+//refacotring taking place
+// exports.getReviews = (request, response, next) => {
+//     fetchReviews().then(({rows}) => {
+//         response.status(200).send(rows)
+//     })
+// }
 
 exports.getReviewById = (request, response, next) => {
     const reviewId = request.params.review_id
@@ -63,9 +64,26 @@ exports.getUsers = (request, response, next) => {
     fetchUsers()
     .then(({rows}) => {
         response.status(200).send(rows)
-    })
+    }).catch(next)
 }
 
+
+//for task 10
+exports.getReviews = (request, response, next) => {
+    const filterCategory = request.query.category
+    const sortByColumn = request.query.sort_by
+    const orderBy = request.query.order
+
+    fetchCategories()
+    .then(({rows}) => {
+        const validCats = rows.map(({slug}) => {return slug})
+        return fetchReviews(filterCategory, sortByColumn, orderBy, validCats)
+    })
+    .then(({rows}) => {
+        response.status(200).send(rows)
+    })
+    .catch(next)
+}
 
 
 

@@ -92,7 +92,7 @@ module.exports = [
     votes: 5
   },
   {
-    title: 'A truly Quacking Game; Quacks of Quedlinburg',
+    title: 'A truly Quacking Game Quacks of Quedlinburg',
     designer: 'Wolfgang Warsch',
     owner: 'mallionaire',
     review_img_url:

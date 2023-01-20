@@ -6,8 +6,19 @@ exports.fetchCategories = () => {
     return db.query(sqlString)
 }
 
-exports.fetchReviews = () => {
-    const sqlString = `SELECT 
+exports.fetchReviews = (filterCategory, sortByColumn, orderBy, validCats) => {
+//deals with invalid sortby
+if (!['owner', 'title', 'review_id', 'category', 'review_img_url', 'created_at', 'votes', 'designer', 'comment_count', undefined].includes(sortByColumn)) {
+    return Promise.reject({status: 400, msg: 'Bad Request - Invalid query parameters'})
+}
+//deals with invalid filterCategory
+if(!validCats.includes(filterCategory) && filterCategory !== undefined) {
+    return Promise.reject({status: 400, msg: 'Bad Request - Invalid query parameters'})
+} 
+//deals with invalid orderBy
+if(orderBy !== undefined && !['ASC', 'DESC'].includes(orderBy.toUpperCase()) && orderBy !== undefined) {return Promise.reject({status: 400, msg: 'Bad Request - Invalid query parameters'})}
+
+    let sqlString = `SELECT 
     A.owner,
     A.title,
     A.review_id,
@@ -23,6 +34,23 @@ exports.fetchReviews = () => {
     GROUP BY A.review_id
     ORDER BY A.created_at DESC
     ;`
+
+    if (filterCategory !== undefined) {
+        sqlString = sqlString.replace(' = B.review_id'
+        ,` = B.review_id 
+        WHERE category = '${filterCategory}'`)
+    }
+
+    if (sortByColumn !== undefined) {
+        sqlString = sqlString.replace('A.created_at DESC'
+        , `A.${sortByColumn} DESC`)
+    }
+
+    if (orderBy !== undefined && orderBy.toUpperCase() === 'ASC') {
+        sqlString = sqlString.replace('DESC'
+        , 'ASC')
+    }
+
     return db.query(sqlString)
 }
 
