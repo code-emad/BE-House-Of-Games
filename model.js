@@ -1,13 +1,24 @@
 const { response } = require('./app')
 const db = require('./db/connection')
 
-module.exports.fetchCategories = () => {
+exports.fetchCategories = () => {
     const sqlString = 'SELECT * FROM categories;'
     return db.query(sqlString)
 }
 
-module.exports.fetchReviews = () => {
-    const sqlString = `SELECT 
+exports.fetchReviews = (filterCategory, sortByColumn, orderBy, validCats) => {
+//deals with invalid sortby
+if (!['owner', 'title', 'review_id', 'category', 'review_img_url', 'created_at', 'votes', 'designer', 'comment_count', undefined].includes(sortByColumn)) {
+    return Promise.reject({status: 400, msg: 'Bad Request - Invalid query parameters'})
+}
+//deals with invalid filterCategory
+if(!validCats.includes(filterCategory) && filterCategory !== undefined) {
+    return Promise.reject({status: 400, msg: 'Bad Request - Invalid query parameters'})
+} 
+//deals with invalid orderBy
+if(orderBy !== undefined && !['ASC', 'DESC'].includes(orderBy.toUpperCase()) && orderBy !== undefined) {return Promise.reject({status: 400, msg: 'Bad Request - Invalid query parameters'})}
+
+    let sqlString = `SELECT 
     A.owner,
     A.title,
     A.review_id,
@@ -23,10 +34,27 @@ module.exports.fetchReviews = () => {
     GROUP BY A.review_id
     ORDER BY A.created_at DESC
     ;`
+
+    if (filterCategory !== undefined) {
+        sqlString = sqlString.replace(' = B.review_id'
+        ,` = B.review_id 
+        WHERE category = '${filterCategory}'`)
+    }
+
+    if (sortByColumn !== undefined) {
+        sqlString = sqlString.replace('A.created_at DESC'
+        , `A.${sortByColumn} DESC`)
+    }
+
+    if (orderBy !== undefined && orderBy.toUpperCase() === 'ASC') {
+        sqlString = sqlString.replace('DESC'
+        , 'ASC')
+    }
+
     return db.query(sqlString)
 }
 
-module.exports.fetchReviewById = (reviewID) => {
+exports.fetchReviewById = (reviewID) => {
     const sqlString = `SELECT 
     review_id,
     title,
@@ -50,7 +78,7 @@ module.exports.fetchReviewById = (reviewID) => {
     })
 }
 
-module.exports.fetchComByReviewId = (reviewId) => {
+exports.fetchComByReviewId = (reviewId) => {
     const sqlString = `SELECT
     comment_id,
     votes,
@@ -65,7 +93,7 @@ module.exports.fetchComByReviewId = (reviewId) => {
     return db.query(sqlString, [reviewId])
 }
 
-module.exports.addComment = (IdUserBody) => {
+exports.addComment = (IdUserBody) => {
     const sqlString = `INSERT INTO comments 
     (body, review_id, author)
     VALUES ($3, $1, $2)
@@ -76,7 +104,7 @@ module.exports.addComment = (IdUserBody) => {
     })
 }
 
-module.exports.alterVotesByReview = (IdVote) => {
+exports.alterVotesByReview = (IdVote) => {
     const sqlString = `UPDATE reviews
     SET votes = votes + $2
     WHERE review_id = $1
@@ -92,7 +120,7 @@ module.exports.alterVotesByReview = (IdVote) => {
     })
 }
 
-module.exports.fetchUsers = () => {
+exports.fetchUsers = () => {
     const sqlString = `SELECT *
     FROM users
     ;`

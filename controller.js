@@ -2,26 +2,27 @@ const db = require('./db/connection')
 const {fetchCategories, fetchReviews, fetchReviewById, fetchComByReviewId,
 addComment, alterVotesByReview, fetchUsers} = require('./model')
 
-module.exports.getCategories = (request, response, next) => {
+exports.getCategories = (request, response, next) => {
     fetchCategories().then((categories) => {
         response.status(200).send(categories.rows)
     }).catch(next);
     }
 
-module.exports.getReviews = (request, response, next) => {
-    fetchReviews().then(({rows}) => {
-        response.status(200).send(rows)
-    })
-}
+//refacotring taking place
+// exports.getReviews = (request, response, next) => {
+//     fetchReviews().then(({rows}) => {
+//         response.status(200).send(rows)
+//     })
+// }
 
-module.exports.getReviewById = (request, response, next) => {
+exports.getReviewById = (request, response, next) => {
     const reviewId = request.params.review_id
     fetchReviewById(reviewId).then((reviewById) => {
         response.status(200).send(reviewById[0])
     }).catch(next)
 }
 
-module.exports.getComByReviewId = (request, response, next) => {
+exports.getComByReviewId = (request, response, next) => {
     const reviewId = request.params.review_id
     fetchReviewById(reviewId)
     .then(() => {
@@ -33,7 +34,7 @@ module.exports.getComByReviewId = (request, response, next) => {
     .catch(next)
 }
 
-module.exports.postComment = (request, response, next) => {
+exports.postComment = (request, response, next) => {
     const reviewId = request.params.review_id
     const username = request.body.username
     const bodyPost = request.body.body
@@ -48,7 +49,7 @@ module.exports.postComment = (request, response, next) => {
     .catch(next)
 }
 
-module.exports.patchReview = (request, response, next) => {
+exports.patchReview = (request, response, next) => {
     const reviewId = request.params.review_id
     const voteAdjust = request.body.inc_votes
 
@@ -59,14 +60,30 @@ module.exports.patchReview = (request, response, next) => {
     .catch(next)
 }
 
-module.exports.getUsers = (request, response, next) => {
+exports.getUsers = (request, response, next) => {
     fetchUsers()
     .then(({rows}) => {
         response.status(200).send(rows)
-    })
-
+    }).catch(next)
 }
 
+
+//for task 10
+exports.getReviews = (request, response, next) => {
+    const filterCategory = request.query.category
+    const sortByColumn = request.query.sort_by
+    const orderBy = request.query.order
+
+    fetchCategories()
+    .then(({rows}) => {
+        const validCats = rows.map(({slug}) => {return slug})
+        return fetchReviews(filterCategory, sortByColumn, orderBy, validCats)
+    })
+    .then(({rows}) => {
+        response.status(200).send(rows)
+    })
+    .catch(next)
+}
 
 
 
