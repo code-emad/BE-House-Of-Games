@@ -1,5 +1,5 @@
 const express = require('express');
-const { getCategories, getReviews, getReviewById, getComByReviewId, postComment, patchReview, getUsers} = require('./controller') 
+const { getCategories, getReviews, getReviewById, getComByReviewId, postComment, patchReview, getUsers, deleteComment} = require('./controller') 
 const app = express();
 
 app.use(express.json())
@@ -18,6 +18,8 @@ app.patch('/api/reviews/:review_id', patchReview)
 
 app.get('/api/users', getUsers)
 
+app.delete('/api/comments/:comment_id', deleteComment)
+
 //error handlers
 app.use((request, response, next) => {
     response.status(404).send({msg: 'Invalid API path'})
@@ -34,7 +36,7 @@ app.use((error, request, response, next) => {
 
 app.use((error, request, response, next) => {
 if (error.code === '22P02') {
-    response.status(400).send({msg: 'Not valid Review Id'})
+    response.status(400).send({msg: 'Not valid Id'})
 }
 if (error.code === '23502' || error.code === '23503') {
     response.status(400).send({msg: 'Bad Request - Invalid info sent'})
