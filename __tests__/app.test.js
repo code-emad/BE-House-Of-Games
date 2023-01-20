@@ -391,18 +391,25 @@ describe('DELETE/api/comments/:comment_id', () => {
         return request(app).delete('/api/comments/1')
         .expect(204)
     });
-    test('deletes the comment specified in params', () => {
-        return request(app).delete('/api/comments/1')
-        .expect(204)
+    test.only('deletes the comment specified in params', () => {
+        return request(app).get('/api/reviews/2/comments')
+        .then(({body}) => {
+            expect(body.length).toBe(3)
+            return request(app).delete('/api/comments/1')
+            .expect(204)
+        })
         .then((body) => {
             expect(body.noContent).toBe(true)
             return request(app).get('/api/reviews/2/comments')
         })
         .then(({body}) => {
             expect(body.length).toBe(2)
+            body.forEach((comment) => {
+                expect(comment.comment_id).not.toBe(2)
+            })
         })
     });
-    test('if valid comment id inserted (but comment does not exist), returns 400, bad request', () => {
+    test('if valid comment id inserted (but comment does not exist), returns 404, bad request', () => {
         return request(app).delete('/api/comments/7')
         .expect(404)
         .then(({text}) => {
@@ -416,7 +423,6 @@ describe('DELETE/api/comments/:comment_id', () => {
             expect(body.msg).toBe("Not valid Id")
         })
     });
-
 });
 
 
