@@ -1,5 +1,5 @@
-const { response } = require('./app')
 const db = require('./db/connection')
+const fs = require('fs/promises')
 
 exports.fetchCategories = () => {
     const sqlString = 'SELECT * FROM categories;'
@@ -142,6 +142,12 @@ exports.removeComment = (commentId) => {
         if (rowCount === 0) {
             return Promise.reject({status: 404, msg: 'Comment Id not found'})
         }
+    })
+}
+
+exports.fetchAPI = () => {
+    return fs.readFile('./endpoints.json', "utf-8").then((endpoints) => {
+        return JSON.parse(endpoints)
     })
 }
 

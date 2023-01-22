@@ -26,9 +26,95 @@
           "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
           "category": "hidden-roles",
           "created_at": 1610964101251,
-          "votes": 5
+          "votes": 5,
+          "review_id": 1,
+          "comment_count": 0
         }
       ]
     }
+  },
+  "GET /api/reviews/:review_id": {
+    "description": "serves an object of a single review",
+    "queries": [],
+    "parameters": ["review_id"],
+    "exampleResponse": {
+      "review_id": 1,
+      "title": "Agricola",
+      "review_body": "Farmyard fun!",
+      "category": "euro game",
+      "designer": "Uwe Rosenberg",
+      "review_img_url": "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+      "votes": 1,
+      "owner": "mallionaire",
+      "created_at": "2021-01-18 10:00:20.514",
+      "comment_count": 0
+    }
+  },
+  "GET /api/reviews/:review_id/comments": {
+    "description": "serves an array of comments by review id",
+    "queries": [],
+    "parameters": ["review_id"],
+    "exampleResponse": [
+      {
+        "comment_id": 5,
+        "body": "Now this is a story all about how, board games turned my life upside down",
+        "votes": 13,
+        "created_at": "2021-01-18 10:24:05.41",
+        "author": "mallionaire",
+        "review_id": 2
+      }
+    ]
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "when a valid body is sent, adds a comment to a review. Serves the added comment",
+    "queries": [],
+    "parameters": ["review_id"],
+    "exampleBodySent": {
+      "username": "dav3rid",
+      "body": "This game was not my cup of tea"
+    },
+    "exampleResponse": {
+      "comment_id": 7,
+      "body": "This game was not my cup of tea",
+      "review_id": 1,
+      "author": "dav3rid",
+      "votes": 0,
+      "created_at": "2021-01-18 10:09:48.11"
+    }
+  },
+  "PATCH /api/reviews/:review_id": {
+    "description": "when a valid body is send, updates the vote element within a review. Serves the updated review",
+    "queries": [],
+    "parameters": ["review_id"],
+    "exampleBodySent": {
+      "inc_votes": 10
+    },
+    "exampleBodyReceived": {
+      "review_id": 1,
+      "title": "Agricola",
+      "category": "Agricola",
+      "designer": "Uwe Rosenberg",
+      "owner": "mallionaire",
+      "review_body": "Farmyard fun!",
+      "review_img_url": "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+      "created_at": "2021-01-18 10:00:20.514",
+      "votes": 11
+    }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleBodyReceived": [
+      {
+      "username": "mallionaire",
+      "name": "haz",
+      "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+    }
+  ]
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a comment as per comment_id",
+    "queries": [],
+    "exampleBodyReceived": {}
   }
 }

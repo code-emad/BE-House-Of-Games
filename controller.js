@@ -1,6 +1,6 @@
 const db = require('./db/connection')
 const {fetchCategories, fetchReviews, fetchReviewById, fetchComByReviewId,
-addComment, alterVotesByReview, fetchUsers, removeComment} = require('./model')
+addComment, alterVotesByReview, fetchUsers, removeComment,fetchAPI} = require('./model')
 
 exports.getCategories = (request, response, next) => {
     fetchCategories().then((categories) => {
@@ -92,10 +92,14 @@ exports.deleteComment = (request, response, next) => {
         response.status(204).send()
     })
     .catch(next)
+}
 
+exports.getAPI = (request, response, next) => {
 
-
-    
+    fetchAPI()
+    .then((body) => {
+        response.status(200).send(body)
+    }).catch(next)
 }
 
 

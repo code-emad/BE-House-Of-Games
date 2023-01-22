@@ -391,7 +391,7 @@ describe('DELETE/api/comments/:comment_id', () => {
         return request(app).delete('/api/comments/1')
         .expect(204)
     });
-    test.only('deletes the comment specified in params', () => {
+    test('deletes the comment specified in params', () => {
         return request(app).get('/api/reviews/2/comments')
         .then(({body}) => {
             expect(body.length).toBe(3)
@@ -421,6 +421,19 @@ describe('DELETE/api/comments/:comment_id', () => {
         .expect(400)
         .then(({body}) => {
             expect(body.msg).toBe("Not valid Id")
+        })
+    });
+});
+
+describe('GET/api', () => {
+    test('should return status code 200', () => {
+        return request(app).get('/api')
+        .expect(200)
+    });
+    test('returned body should have a "GET /api" key', () => {
+        return request(app).get('/api')
+        .then(({body}) => {
+            expect(body).toHaveProperty('GET /api')
         })
     });
 });
