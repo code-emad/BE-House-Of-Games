@@ -61,6 +61,7 @@ describe('GET/api/reviews', () => {
                 expect(review).toHaveProperty("votes" ,expect.any(Number))
                 expect(review).toHaveProperty("designer" ,expect.any(String))
                 expect(review).toHaveProperty("comment_count" ,expect.any(Number))
+                expect(review).toHaveProperty("review_body" ,expect.any(String))
             })
         })
     });

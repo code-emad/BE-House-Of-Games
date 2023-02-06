@@ -27,6 +27,7 @@ if(orderBy !== undefined && !['ASC', 'DESC'].includes(orderBy.toUpperCase()) && 
     A.created_at,
     A.votes,
     A.designer,
+    A.review_body,
     CAST(COUNT(B.review_id) AS int) as comment_count
     FROM reviews A
     LEFT JOIN comments B
