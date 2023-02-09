@@ -341,6 +341,21 @@ describe('GET/api/reviews(queries)', () => {
             expect(body).toBeSortedBy('title', {descending: true})
         })
     });
+    test('should be able to sort by comment_count column if queried', () => {
+        return request(app).get('/api/reviews/?sort_by=comment_count')
+        .then(({body}) => {
+            expect(body.length).toBe(13)
+            expect(body).toBeSortedBy('comment_count', {descending: true})
+        })
+    });
+    test('should be able to sort by votes column if queried', () => {
+        return request(app).get('/api/reviews/?sort_by=votes')
+        .then(({body}) => {
+            expect(body.length).toBe(13)
+            expect(body).toBeSortedBy('votes', {descending: true})
+        })
+    });
+
     test('can take another query that will choose  asc or desc accordingly', () => {
         return request(app).get('/api/reviews?sort_by=title&order=asc')
         .then(({body}) => {

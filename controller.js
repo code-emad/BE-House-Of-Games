@@ -74,9 +74,11 @@ exports.getReviews = (request, response, next) => {
     const sortByColumn = request.query.sort_by
     const orderBy = request.query.order
 
+    
     fetchCategories()
     .then(({rows}) => {
         const validCats = rows.map(({slug}) => {return slug})
+        console.log(sortByColumn)
         return fetchReviews(filterCategory, sortByColumn, orderBy, validCats)
     })
     .then(({rows}) => {
