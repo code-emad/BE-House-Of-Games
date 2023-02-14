@@ -1,6 +1,6 @@
 # Northcoders House of Games API
 
-## Introduction 
+## Purpose 
 The goal of this backend project was to build an API for the purpose of accessing application data programmatically. Similar to reddit, the idea was to mimic the buidling of a real world backend service which should be able to provide information to the front end architecture. 
 
 PSQL was used to create the related database, interactions are completed with node-postgres. 
