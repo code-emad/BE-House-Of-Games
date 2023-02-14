@@ -10,7 +10,7 @@ The completed API has been hosted using render and can found with there link [he
 ## Setup
 In order to make a local clone of this project, within your terminal you will need to run `git clone https://github.com/code-emad/House-of-Games.git`
 
-Once the files have been cloned, you will need change directory into the project directory and run "npm install" which will install the dependencies listed within the package.json file. 
+Once the files have been cloned, you will need change directory into the project directory and run `npm install` which will install the dependencies listed within the package.json file. 
 
 To create a local version of the database, you will need to run `npm run setup-dbs` then `npm run seed` within the terminal. This will run the seed file which will create a nc_games database and nc_games_test database populated with the contents from the data file.
 
