@@ -29,6 +29,6 @@ Relevent tests have been created and are within the `__tests__` folder. Tests ca
 | PG format   | Used to create dynamic SQL queries and prevent SQL injection                                  |
 | Supertest   | A Node.js library to test APIs by writing tests for endpoints                                                        |
 
-## Miniumum Versions
+## Minimum Versions
 Node v19.1.0
 PostGres ^8.7.3
