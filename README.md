@@ -5,7 +5,7 @@ The goal of this backend project was to build an API for the purpose of accessin
 
 PSQL was used to create the related database, interactions are completed with node-postgres. 
 
-The completed API has been hosted using render and can found with there link [here](https://emads-be-project.onrender.com/api).
+The completed API has been hosted using render and can found with the link [here](https://emads-be-project.onrender.com/api).
 
 ## Setup
 In order to make a local clone of this project, within your terminal you will need to run `git clone https://github.com/code-emad/House-of-Games.git`
