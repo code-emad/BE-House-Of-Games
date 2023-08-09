@@ -18,7 +18,6 @@ if(!validCats.includes(filterCategory) && filterCategory !== undefined) {
 //deals with invalid orderBy
 if(orderBy !== undefined && !['ASC', 'DESC'].includes(orderBy.toUpperCase()) && orderBy !== undefined) {return Promise.reject({status: 400, msg: 'Bad Request - Invalid query parameters'})}
 
-console.log(sortByColumn, 'model')
     let sqlString = `SELECT 
     A.owner,
     A.title,
@@ -44,7 +43,6 @@ console.log(sortByColumn, 'model')
     }
 
     if (sortByColumn === 'comment_count') {
-        console.log('hi')
         sqlString = sqlString.replace('A.created_at DESC'
         , `${sortByColumn} DESC`)
     }
