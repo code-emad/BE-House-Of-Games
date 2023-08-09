@@ -14,7 +14,7 @@ Once the files have been cloned, you will need change directory into the project
 
 To create a local version of the database, you will need to run `npm run setup-dbs` then `npm run seed` within the terminal. This will run the seed file which will create a nc_games database and nc_games_test database populated with the contents from the data file.
 
-To specify which database is to be used, you will need to create 2 new files `.env.development` + `.env.test` and save within the directory. You will then need specify the database in the file which can be done by inserting `PGDATABASE=nc_games` + `PGDATABASE=nc_games_test` in the respective files.
+To specify which database is to be used, you will need to create 2 new files `.env.development` + `.env.test` and save within the directory. You will then need specify the database in the file which can be done by inserting `PGDATABASE=nc_games` + `PGDATABASE=nc_games_test` in the respective files. Within these files you may need to specificy your PostGres password depending on your settings, this can be done by including a password variable within the env.development and env.test files eg.`PGPASSWORD=passwordexample123`.
 
 Relevent tests have been created and are within the `__tests__` folder. Tests can be run with the command `npm run test`.
 
