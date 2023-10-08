@@ -67,7 +67,7 @@
     ]
   },
   "POST /api/reviews/:review_id/comments": {
-    "description": "when a valid body is sent, adds a comment to a review. Serves the added comment",
+    "description": "When a valid username and body is sent, adds a comment to a review. Serves the added comment.",
     "queries": [],
     "parameters": ["review_id"],
     "exampleBodySent": {
